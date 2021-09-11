@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Repository
@@ -39,22 +40,17 @@ public class BookRepository implements ProjectRepository<Book> {
     }
 
     @Override
-    public boolean removeItemByRegex(String bookToRemoveByRegex) {
+    public boolean removeItemByRegex(String regex) {
         boolean statusRemove = false;
-        try {
-            for (Book book : retreiveAll()) {
-                for (Field attributeBook : book.getClass().getDeclaredFields()) {
-                    attributeBook.setAccessible(true);
-                    String value = attributeBook.get(book) == null ? "null" : String.valueOf(attributeBook.get(book));
-                    if (Pattern.compile(bookToRemoveByRegex).matcher(value).matches()) {
-                        logger.info("remove book completed: " + book);
-                        statusRemove = repo.remove(book);
-                        break;
-                    }
-                }
+        Pattern pattern = Pattern.compile(regex);
+        for (Book book : retreiveAll()) {
+            if (pattern.matcher(Objects.toString(book.getId(), "null")).matches() ||
+                    pattern.matcher(Objects.toString(book.getAuthor(), "null")).matches() ||
+                    pattern.matcher(Objects.toString(book.getTitle(), "null")).matches() ||
+                    pattern.matcher(Objects.toString(book.getSize(), "null")).matches()) {
+                logger.info("remove book completed: " + book);
+                statusRemove = repo.remove(book);
             }
-        } catch (IllegalAccessException exception) {
-            exception.printStackTrace();
         }
         return statusRemove;
     }

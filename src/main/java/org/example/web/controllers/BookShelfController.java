@@ -4,12 +4,14 @@ import org.apache.log4j.Logger;
 import org.example.app.services.BookService;
 import org.example.web.dto.Book;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.util.StringUtils;
 
 @Controller
 @RequestMapping(value = "/books")
@@ -41,14 +43,18 @@ public class BookShelfController {
     }
 
     @PostMapping("/remove")
-    public String removeBook(@RequestParam(value = "bookIdToRemove") Integer bookIdToRemove) {
-        bookService.removeBookById(bookIdToRemove);
+    public String removeBook(@RequestParam(value = "bookIdToRemove") @Nullable Integer bookIdToRemove) {
+        if (bookIdToRemove != null) {
+            bookService.removeBookById(bookIdToRemove);
+        }
         return "redirect:/books/shelf";
     }
 
     @PostMapping("/removeByRegex")
     public String removeByRegexBook(@RequestParam(value = "queryRegex") String queryRegex) {
-        bookService.removeBookByRegex(queryRegex);
+        if (!StringUtils.isEmpty(queryRegex)) {
+            bookService.removeBookByRegex(queryRegex);
+        }
         return "redirect:/books/shelf";
     }
 }
