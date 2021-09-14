@@ -3,17 +3,17 @@ package org.example.web.dto;
 import javax.validation.constraints.Digits;
 
 public class Book {
-    private String id;
+    private Integer id;
     private String author;
     private String title;
     @Digits(integer = 4, fraction = 0)
     private Integer size;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
