@@ -13,14 +13,11 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
 
 @Repository
 public class BookRepository implements ProjectRepository<Book>, ApplicationContextAware {
 
     private final Logger logger = Logger.getLogger(BookRepository.class);
-    //    private final List<Book> repo = new ArrayList<>();
     private ApplicationContext context;
     private final NamedParameterJdbcTemplate jdbcTempalte;
 
@@ -62,19 +59,11 @@ public class BookRepository implements ProjectRepository<Book>, ApplicationConte
     }
 
     @Override
-    public boolean removeItemByRegex(String regex) {
-        boolean statusRemove = false;
-        Pattern pattern = Pattern.compile(regex);
-        for (Book book : retreiveAll()) {
-            if (pattern.matcher(Objects.toString(book.getId(), "null")).matches() ||
-                    pattern.matcher(Objects.toString(book.getAuthor(), "null")).matches() ||
-                    pattern.matcher(Objects.toString(book.getTitle(), "null")).matches() ||
-                    pattern.matcher(Objects.toString(book.getSize(), "null")).matches()) {
-                logger.info("remove book completed: " + book);
-//                statusRemove = repo.remove(book);
-            }
-        }
-        return statusRemove;
+    public boolean removeItemByRegex(String regex) throws Exception {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        int countResult = jdbcTempalte.update("DELETE FROM books WHERE REGEXP_LIKE(author,'" + regex + "') OR REGEXP_LIKE(title,'" + regex + "') OR REGEXP_LIKE(size,'" + regex + "')", parameterSource);
+        logger.info("deleted " + countResult + " book");
+        return countResult > 0;
     }
 
     @Override

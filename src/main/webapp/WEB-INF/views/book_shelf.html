@@ -38,19 +38,19 @@
                     <input type="text" placeholder="author" th:field="*{author}">
                 </td>
                 <td>
-                    <p th:if="${#fields.hasErrors('author')}">field value must be less than 50 characters</p>
+                    <p th:if="${#fields.hasErrors('author')}" style="color:red">Field value must be less than 50 characters</p>
                 </td>
                 <td>
                     <input type="text" placeholder="book_title" th:field="*{title}">
                 </td>
                 <td>
-                    <p th:if="${#fields.hasErrors('title')}">field value must be less than 100 characters</p>
+                    <p th:if="${#fields.hasErrors('title')}" style="color:red">Field value must be less than 100 characters</p>
                 </td>
                 <td>
                     <input type="text" placeholder="size (pages)" th:field="*{size}">
                 </td>
                 <td>
-                    <p th:if="${#fields.hasErrors('size')}">field value must be digit and less than 4 signs</p>
+                    <p th:if="${#fields.hasErrors('size')}" style="color:red">Field value must be digit and less than 4 signs</p>
                 </td>
                 <td>
                     <input type="submit" value="save">
@@ -68,7 +68,7 @@
                 <td>
                     <input type="submit" value="remove">
                 </td>
-                <td th:if="${#fields.hasErrors()}">
+                <td th:if="${#fields.hasErrors()}" style="color:red">
                     <p>Wrong id or not found</p>
                 </td>
             </tr>
@@ -84,6 +84,7 @@
                 <td>
                     <input type="submit" value="remove by regex">
                 </td>
+                <td th:text="${errorRegex}" style="color:red"></td>
             </tr>
         </table>
     </form>
@@ -97,6 +98,7 @@
                 <td>
                     <input type="submit" name="Upload"/>
                 </td>
+                <td th:text="${errorFile}" style="color:red"></td>
             </tr>
         </table>
     </form>

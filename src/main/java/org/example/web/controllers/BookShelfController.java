@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.util.StringUtils;
 
 import javax.validation.Valid;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 @Controller
 @RequestMapping(value = "/books")
@@ -70,33 +72,43 @@ public class BookShelfController {
     }
 
     @PostMapping("/removeByRegex")
-    public String removeByRegexBook(@RequestParam(value = "queryRegex") String queryRegex) {
+    public String removeByRegexBook(@RequestParam(value = "queryRegex") String queryRegex, RedirectAttributes redirectAttributes) {
         if (!StringUtils.isEmpty(queryRegex)) {
-            bookService.removeBookByRegex(queryRegex);
+            try {
+                bookService.removeBookByRegex(queryRegex);
+            } catch (Exception message){
+                redirectAttributes.addFlashAttribute("errorRegex", "Error! Please check the regex");
+            }
         }
         return "redirect:/books/shelf";
     }
 
     @PostMapping("/uploadFile")
-    public String uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
-        String name = file.getOriginalFilename();
-        byte[] bytes = file.getBytes();
+    public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorFile", "Please select a file to upload");
+        } else {
+            try {
+                String name = file.getOriginalFilename();
+                byte[] bytes = file.getBytes();
 
-        //create dir
-        String rootPath = System.getProperty("catalina.home");
-        File dir = new File(rootPath + File.separator + "external_uploads");
-        if(!dir.exists()){
-            dir.mkdirs();
+                String rootPath = System.getProperty("catalina.home");
+                File dir = new File(rootPath + File.separator + "external_uploads");
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+
+                File serverFile = new File(dir.getAbsolutePath() + File.separator + name);
+                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+                stream.write(bytes);
+                stream.close();
+
+                logger.info("new file saved at: " + serverFile.getAbsolutePath());
+            } catch (IOException message) {
+                redirectAttributes.addFlashAttribute("errorFile", "Error reading the file, please check the file");
+            }
+
         }
-
-        //create file
-        File serverFile = new File(dir.getAbsolutePath() + File.separator +name);
-        BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-        stream.write(bytes);
-        stream.close();
-
-        logger.info("new file saved at: " + serverFile.getAbsolutePath());
-
         return "redirect:/books/shelf";
     }
 }

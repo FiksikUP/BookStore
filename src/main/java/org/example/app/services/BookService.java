@@ -30,7 +30,7 @@ public class BookService {
         return bookRepo.removeItemById(bookIdToRemove);
     }
 
-    public boolean removeBookByRegex(String bookToRemoveByRegex ) {
+    public boolean removeBookByRegex(String bookToRemoveByRegex ) throws Exception {
         return bookRepo.removeItemByRegex(bookToRemoveByRegex);
     }
 
