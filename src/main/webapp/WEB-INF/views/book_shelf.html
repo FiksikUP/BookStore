@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:form="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>My book shelf</title>
@@ -38,19 +39,19 @@
                     <input type="text" placeholder="author" th:field="*{author}">
                 </td>
                 <td>
-                    <p th:if="${#fields.hasErrors('author')}" style="color:red">Field value must be less than 50 characters</p>
+                    <p th:if="${#fields.hasErrors('author')}" style="color:red">The field value must not be empty and contain no more than 50 characters.</p>
                 </td>
                 <td>
                     <input type="text" placeholder="book_title" th:field="*{title}">
                 </td>
                 <td>
-                    <p th:if="${#fields.hasErrors('title')}" style="color:red">Field value must be less than 100 characters</p>
+                    <p th:if="${#fields.hasErrors('title')}" style="color:red">The field value must not be empty and contain no more than 100 characters.</p>
                 </td>
                 <td>
                     <input type="text" placeholder="size (pages)" th:field="*{size}">
                 </td>
                 <td>
-                    <p th:if="${#fields.hasErrors('size')}" style="color:red">Field value must be digit and less than 4 signs</p>
+                    <p th:if="${#fields.hasErrors('size')}" style="color:red">The field value must be digits and no more than 4 characters.</p>
                 </td>
                 <td>
                     <input type="submit" value="save">

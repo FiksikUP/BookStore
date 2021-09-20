@@ -52,7 +52,7 @@ public class BookShelfController {
             model.addAttribute("bookIdToRemove", new BookIdToRemove());
             model.addAttribute("bookList", bookService.getAllBooks());
             return "book_shelf";
-        } else if (!book.isNull()) {
+        } else {
             bookService.saveBook(book);
             logger.info("current repository size: " + bookService.getAllBooks().size());
         }
@@ -73,11 +73,13 @@ public class BookShelfController {
 
     @PostMapping("/removeByRegex")
     public String removeByRegexBook(@RequestParam(value = "queryRegex") String queryRegex, RedirectAttributes redirectAttributes) {
-        if (!StringUtils.isEmpty(queryRegex)) {
+        if (StringUtils.isEmpty(queryRegex.trim())) {
+            redirectAttributes.addFlashAttribute("errorRegex", "Please enter a regular expression.");
+        } else {
             try {
                 bookService.removeBookByRegex(queryRegex);
-            } catch (Exception message){
-                redirectAttributes.addFlashAttribute("errorRegex", "Error! Please check the regex");
+            } catch (Exception message) {
+                redirectAttributes.addFlashAttribute("errorRegex", "Error! Please check the regex.");
             }
         }
         return "redirect:/books/shelf";
@@ -86,7 +88,7 @@ public class BookShelfController {
     @PostMapping("/uploadFile")
     public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
         if (file.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorFile", "Please select a file to upload");
+            redirectAttributes.addFlashAttribute("errorFile", "Please select a file to upload.");
         } else {
             try {
                 String name = file.getOriginalFilename();
@@ -105,7 +107,7 @@ public class BookShelfController {
 
                 logger.info("new file saved at: " + serverFile.getAbsolutePath());
             } catch (IOException message) {
-                redirectAttributes.addFlashAttribute("errorFile", "Error reading the file, please check the file");
+                redirectAttributes.addFlashAttribute("errorFile", "Error reading the file, please check the file.");
             }
 
         }

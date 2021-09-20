@@ -1,15 +1,18 @@
 package org.example.web.dto;
 
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 public class Book {
     private Integer id;
+    @NotBlank()
     @Size(max = 50)
     private String author;
+    @NotBlank()
     @Size(max = 100)
     private String title;
-    @Digits(integer = 4, fraction = 0)
+    @NotNull
+    @Min(1)
+    @Max(9999)
     private Integer size;
 
     public Integer getId() {
